@@ -3,9 +3,7 @@ from .._properties import GeneralProperties
 
 from typing import List
 
-from rich.panel import Panel
 from rich.table import Table
-from rich.columns import Columns
 from rich.console import RenderableType
 
 
@@ -25,13 +23,22 @@ class HostInfo(BaseModel):
     def __rich__(self) -> RenderableType:
         """ Override the rich repr """
         table = Table(show_header=False)
+
         table.add_row("IP", self.ip_str)
         table.add_row("Ports", ", ".join(map(str, self.sorted_ports)))
         table.add_row("Organization", self.data[0].org)
 
         table_b = Table(show_header=False, show_lines=True)
 
-        for data in self.data:
-            table_b.add_row(str(data.port), data.product)
+        for _data in self.data:
+            port = str(_data.port)
+            data = ""
 
-        return Panel(Columns((table, table_b)))
+            if _data.product:
+                data += f"{_data.product}"
+
+            table_b.add_row(port, data or "[red]-[/red]")
+
+        table.add_row("Data", table_b)
+
+        return table
