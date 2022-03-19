@@ -14,7 +14,6 @@ class HostInfo(BaseModel):
     ip_str: str
     ports: List[int]
     data: List[GeneralProperties]
-
     asn: Optional[str]
     org: Optional[str]
 
