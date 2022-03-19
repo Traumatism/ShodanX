@@ -1,13 +1,13 @@
 from ._model import BaseModel
 
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Union, Literal
 
 
-TAGS = {
+Tag = Literal[
     "c2", "cdn", "cloud", "compromised", "cryptocurrency", "database",
     "devops", "doublepulsar", "honeypot", "ics", "iot", "malware", "medical",
     "onion", "self-signed", "scanner", "starttls", "tor", "videogame", "vpn"
-}
+]
 
 
 class MacAddressInfo(BaseModel):
@@ -49,7 +49,7 @@ class GeneralProperties(BaseModel):
     os: Optional[str]
     platform: Optional[str]
     product: Optional[str]
-    tags: Optional[List[str]]
+    tags: Optional[Tag]
     uptime: Optional[int]
     vendor: Optional[str]
     version: Optional[str]
