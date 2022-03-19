@@ -1,14 +1,12 @@
 import pydantic
 
-from rich.table import Table
+from rich.console import RenderableType
 
 
 class BaseModel(pydantic.BaseModel):
     """ Base model for all API models """
 
-    def __rich__(self) -> Table:
-        """ Override the rich repr """
-        ...
+    def __rich__(self) -> RenderableType: ...
 
     def __repr__(self) -> str:
         """ Override the repr """
