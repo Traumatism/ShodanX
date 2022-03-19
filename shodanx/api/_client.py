@@ -60,9 +60,7 @@ class Client:
 
     async def host(self, target: str) -> HostInfo:
         """ Get host info """
-        return HostInfo(
-            **(await self.get(f"/shodan/host/{target}")).json()
-        )
+        return HostInfo(**(await self.get(f"/shodan/host/{target}")).json())
 
     async def search(
         self, query: str, page: int = 1, limit: int = 100
