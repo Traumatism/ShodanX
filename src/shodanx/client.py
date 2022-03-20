@@ -33,12 +33,10 @@ class Client:
 
         return InternetDB(**response.json())
 
-    def host(self, ip: str) -> HostInfo:
+    def host(self, host: str) -> HostInfo:
         """ Get host info """
-
-        response = self.client.get(f"/shodan/host/{ip}", params=self.params)
+        response = self.client.get(f"/shodan/host/{host}", params=self.params)
         response.raise_for_status()
-
         return HostInfo(**response.json())
 
     def search(

@@ -43,10 +43,10 @@ def search(query: str, page: int, limit: int) -> None:
 
 @cli.command()
 @click.argument("host", metavar="<ip address>")
-def host(target: str) -> None:
+def host(host: str) -> None:
     """ Get host info """
     with Client(KEY) as client:
-        console.print(client.host(target))
+        console.print(client.host(host))
 
 
 @cli.command()
