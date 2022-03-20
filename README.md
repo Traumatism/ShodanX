@@ -3,7 +3,7 @@ _Supposed to be a better Shodan API wrapper_
 
 ## Install
 
-`pip install git+github.com/traumatism/shodanx`
+`pip install git+https://github.com/traumatism/shodanx`
 
 
 ## Example
