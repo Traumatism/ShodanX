@@ -2,8 +2,7 @@ import httpx
 
 from typing import AsyncGenerator, Dict, Generator
 
-from .properties import InternetDB
-from .responses.host import HostInfo
+from .models import InternetDB, HostInfo
 
 
 BASE_URL = "https://api.shodan.io"
