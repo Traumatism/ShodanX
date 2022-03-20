@@ -13,7 +13,7 @@ class Client:
 
     def __init__(self, api_key: str) -> None:
         self.api_key = api_key
-        self.client = httpx.Client(base_url=BASE_URL)
+        self.client = httpx.Client(base_url=BASE_URL, timeout=30)
 
     @property
     def params(self) -> Dict:
@@ -57,7 +57,7 @@ class AsyncClient(Client):
         """ Initialize the client """
         super().__init__(api_key)
 
-        self.client = httpx.AsyncClient(base_url=BASE_URL)
+        self.client = httpx.AsyncClient(base_url=BASE_URL, timeout=30)
 
     async def close(self) -> None:
         """ Close the client """
