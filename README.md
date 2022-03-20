@@ -16,17 +16,17 @@ import os
 
 def synchronous():
     """ ShodanX basic """
+
     with shodanx.Client() as client:
         host_info = client.host("1.1.1.1")
-
         query_results = client.search("apache")
 
 
 async def asynchronous():
     """ ShodanX supports asyncio """
+
     async with shodanx.AsyncClient() as client:
         host_info = await client.host("1.1.1.1")
-
         query_results = await client.search("apache")
 
 
