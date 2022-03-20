@@ -32,7 +32,7 @@ def cli() -> None: ...
 @cli.command()
 @click.argument("query", metavar="<query>")
 @click.option("--page", default=1, type=int)
-def search(query: str, page: int, limit: int) -> None:
+def search(query: str, page: int) -> None:
     """ Search a query """
     with Client(KEY) as client:
         for host in client.search(query, page):
