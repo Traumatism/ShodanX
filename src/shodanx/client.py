@@ -2,8 +2,7 @@ import httpx
 
 from typing import AsyncGenerator, Dict, Generator
 
-from shodanx.properties import InternetDB
-
+from .properties import InternetDB
 from .responses.host import HostInfo
 
 
@@ -73,7 +72,6 @@ class AsyncClient(Client):
 
     async def internetdb(self, ip: str) -> InternetDB:
         """ Get InternetDB info """
-
         async with httpx.AsyncClient(base_url=IDB_URL) as client:
             response = await client.get(f"{ip}")
 
