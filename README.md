@@ -7,6 +7,7 @@ _Supposed to be a better Shodan API wrapper_
 
 
 ## Example
+
 ```py
 import asyncio
 import shodanx

@@ -1,5 +1,5 @@
-from .._model import BaseModel
-from .._properties import GeneralProperties
+from ..abc import BaseModel
+from ..properties import GeneralProperties
 
 from typing import List, Optional
 

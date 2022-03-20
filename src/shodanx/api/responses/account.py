@@ -1,4 +1,4 @@
-from .._model import BaseModel
+from ..abc import BaseModel
 
 
 class AccountInfo(BaseModel):
