@@ -52,6 +52,7 @@ def host(host: str) -> None:
 @desync
 async def hosts(file: str) -> None:
     """ Get hosts info """
+
     async with AsyncClient() as client:
         lines = (line.strip() for line in file)
 
