@@ -6,7 +6,24 @@ _Supposed to be a better Shodan API wrapper_
 `pip install git+https://github.com/traumatism/shodanx --upgrade`
 
 
-## Example
+## Command line interface
+
+ShodanX also have a command line interface.
+
+```
+$ python3 -m shodanx --help
+
+$ python3 -m shodanx search product:Apache port:8888
+
+$ python3 -m shodanx host 1.1.1.1
+
+$ python3 -m shodanx hosts file_with_ips.txt
+
+$ python3 -m shodanx internetdb file_with_ips.txt
+```
+
+
+## SDK
 
 ```py
 import asyncio
