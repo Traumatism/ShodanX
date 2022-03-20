@@ -2,7 +2,6 @@ from .abc import BaseModel
 
 from typing import Any, List, Optional, Union, Literal
 
-from rich.console import RenderableType
 from rich.table import Table
 
 
