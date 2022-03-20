@@ -2,6 +2,9 @@ from .abc import BaseModel
 
 from typing import Any, List, Optional, Union, Literal
 
+from rich.console import RenderableType
+from rich.table import Table
+
 
 Tag = Literal[
     "c2", "cdn", "cloud", "compromised", "cryptocurrency", "database",
@@ -80,3 +83,40 @@ class Location(BaseModel):
     latitude: Optional[Union[int, float]]
     longitude: Optional[Union[int, float]]
     region_code: Optional[str]
+
+
+class InternetDB(BaseModel):
+    """ InternetDB property """
+    ip: Optional[str]
+    cpes: Optional[List[str]]
+    hostnames: Optional[List[str]]
+    ports: Optional[List[int]]
+    tags: Optional[List[str]]
+    vulns: Optional[List[str]]
+
+    def __rich__(self):
+
+        _fields = {
+            "IP": self.ip,
+            "CPEs": self.cpes,
+            "Hostnames": self.hostnames,
+            "Ports": self.ports,
+            "Tags": self.tags,
+            "Vulnerabilities": self.vulns,
+        }
+
+        fields = {
+            key: value
+            for key, value in _fields.items()
+            if value
+        }
+
+        table = Table(show_header=False)
+
+        for key, value in fields.items():
+            if isinstance(value, list):
+                table.add_row(key, ", ".join(map(str, value)))
+            else:
+                table.add_row(key, value)
+
+        return table

@@ -2,10 +2,13 @@ import httpx
 
 from typing import AsyncGenerator, Dict, Generator
 
+from shodanx.properties import InternetDB
+
 from .responses.host import HostInfo
 
 
 BASE_URL = "https://api.shodan.io"
+IDB_URL = "https://internetdb.shodan.io"
 
 
 class Client:
@@ -22,8 +25,17 @@ class Client:
     def close(self) -> None:
         return self.client.close()
 
+    def internetdb(self, ip: str) -> InternetDB:
+        """ Get InternetDB info """
+
+        with httpx.Client(base_url=IDB_URL) as client:
+            response = client.get(f"{ip}")
+
+        return InternetDB(**response.json())
+
     def host(self, ip: str) -> HostInfo:
         """ Get host info """
+
         response = self.client.get(f"/shodan/host/{ip}", params=self.params)
         response.raise_for_status()
 
@@ -63,11 +75,20 @@ class AsyncClient(Client):
         """ Close the client """
         await self.client.aclose()
 
+    async def internetdb(self, ip: str) -> InternetDB:
+        """ Get InternetDB info """
+
+        async with httpx.AsyncClient(base_url=IDB_URL) as client:
+            response = await client.get(f"{ip}")
+
+        return InternetDB(**response.json())
+
     async def host(self, target: str) -> HostInfo:
         """ Get host info """
         response = await self.client.get(
             f"/shodan/host/{target}", params=self.params
         )
+
         response.raise_for_status()
 
         return HostInfo(**response.json())

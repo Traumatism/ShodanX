@@ -53,15 +53,30 @@ def host(target: str) -> None:
 @click.argument("file", type=click.File("r"))
 @desync
 async def hosts(file: str) -> None:
-    """ Get host info """
+    """ Get hosts info """
     async with AsyncClient(KEY) as client:
-        lines = [line.strip() for line in file]
+        lines = (line.strip() for line in file)
 
         results = asyncio.gather(
             asyncio.create_task(client.host(line)) for line in lines
         )
 
         for result in await results:
+            console.print(result)
+
+
+@cli.command()
+@click.argument("file", type=click.Path(exists=True))
+@desync
+async def internetdb(file: str) -> None:
+    """ Get hosts info """
+    async with AsyncClient(KEY) as client:
+        results = await asyncio.gather(*[
+            asyncio.create_task(client.internetdb(line.strip()))
+            for line in open(file, "r").readlines()
+        ])
+
+        for result in results:
             console.print(result)
 
 
