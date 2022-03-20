@@ -23,7 +23,7 @@ async def asynchronous():
 
 
 def synchronous():
-    """ ShodanX supports syncio """
+    """ ShodanX basic """
     with shodanx.Client() as client:
         host_info = client.host("1.1.1.1")
 
