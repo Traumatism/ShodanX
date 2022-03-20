@@ -1,4 +1,4 @@
-# ShodanX
+# ShodanX 🕸
 _Supposed to be a better Shodan API wrapper_
 
 ## Install

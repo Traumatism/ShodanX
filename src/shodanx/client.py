@@ -2,6 +2,8 @@ import httpx
 
 from typing import AsyncGenerator, Dict, Generator
 
+from shodanx.utils import load_api_key
+
 from .models import InternetDB, HostInfo
 
 
@@ -12,7 +14,7 @@ IDB_URL = "https://internetdb.shodan.io"
 class Client:
     """ ShodanX API client """
 
-    def __init__(self, api_key: str) -> None:
+    def __init__(self, api_key: str = load_api_key()) -> None:
         self.api_key = api_key
         self.client = httpx.Client(base_url=BASE_URL, timeout=30)
 
@@ -59,7 +61,7 @@ class Client:
 class AsyncClient(Client):
     """ ShodanX asynchronous API client """
 
-    def __init__(self, api_key: str) -> None:
+    def __init__(self, api_key: str = load_api_key()) -> None:
         """ Initialize the client """
         super().__init__(api_key)
 

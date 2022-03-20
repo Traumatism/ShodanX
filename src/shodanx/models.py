@@ -97,12 +97,9 @@ class InternetDB(BaseModel):
     def __rich__(self):
 
         _fields = {
-            "IP": self.ip,
-            "CPEs": self.cpes,
-            "Hostnames": self.hostnames,
-            "Ports": self.ports,
-            "Tags": self.tags,
-            "Vulnerabilities": self.vulns
+            "IP": self.ip, "CPEs": self.cpes,
+            "Hostnames": self.hostnames, "Ports": self.ports,
+            "Tags": self.tags, "Vulnerabilities": self.vulns
         }
 
         fields = {key: value for key, value in _fields.items() if value}

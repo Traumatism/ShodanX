@@ -1,4 +1,3 @@
-import os
 import asyncio
 import functools
 import rich_click
@@ -7,17 +6,16 @@ from typing import Callable, TypeVar
 
 from rich.console import Console
 
+from .utils import load_api_key
 from .client import Client, AsyncClient
 
 console = Console()
 
 click = rich_click
-
 click.rich_click.USE_RICH_MARKUP = True
 
-KEY = os.environ["SHODAN_API_KEY"]
-
 T = TypeVar("T")
+KEY = load_api_key()
 
 
 def desync(func: Callable[..., T]) -> Callable[..., T]:
@@ -45,7 +43,7 @@ def search(query: str, page: int, limit: int) -> None:
 @click.argument("host", metavar="<ip address>")
 def host(host: str) -> None:
     """ Get host info """
-    with Client(KEY) as client:
+    with Client() as client:
         console.print(client.host(host))
 
 
@@ -54,7 +52,7 @@ def host(host: str) -> None:
 @desync
 async def hosts(file: str) -> None:
     """ Get hosts info """
-    async with AsyncClient(KEY) as client:
+    async with AsyncClient() as client:
         lines = (line.strip() for line in file)
 
         results = asyncio.gather(
@@ -70,7 +68,7 @@ async def hosts(file: str) -> None:
 @desync
 async def internetdb(file: str) -> None:
     """ Get hosts info """
-    async with AsyncClient(KEY) as client:
+    async with AsyncClient() as client:
         results = await asyncio.gather(*[
             asyncio.create_task(client.internetdb(line.strip()))
             for line in open(file, "r").readlines()
