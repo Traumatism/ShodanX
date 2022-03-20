@@ -86,8 +86,10 @@ class AsyncClient(Client):
         response = await self.client.get("/shodan/host/search", params=params)
         response.raise_for_status()
 
-        for host in response.json()["matches"]:
-            yield HostInfo(**host)
+        return (
+            HostInfo(**host)
+            for host in response.json()["matches"]
+        )
 
     async def count(self, query: str) -> int:
         """ Count the number of hosts """
