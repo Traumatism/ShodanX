@@ -1,7 +1,7 @@
+from typing import Any, List, Optional, Union, Literal
+
 from rich.table import Table
 from rich.console import RenderableType
-
-from typing import Any, List, Optional, Union, Literal
 
 from .abc import BaseModel
 
@@ -147,8 +147,8 @@ class HostInfo(BaseModel):
         table_b = Table(show_header=False, show_lines=True)
 
         for _data in self.data:
-            port = str(_data.port)
             data = ""
+            port = str(_data.port)
 
             if _data.product:
                 data += f"{_data.product}"
