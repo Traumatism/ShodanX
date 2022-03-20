@@ -1,5 +1,6 @@
-from httpx import AsyncClient, Response
-from typing import AsyncGenerator, Dict, Optional
+import httpx
+
+from typing import AsyncGenerator, Dict, Generator
 
 from .responses.host import HostInfo
 
@@ -11,74 +12,98 @@ class Client:
     """ ShodanX API client """
 
     def __init__(self, api_key: str) -> None:
-        """ Initialize the client """
-
         self.api_key = api_key
+        self.client = httpx.Client(base_url=BASE_URL)
 
-        self.client = AsyncClient(base_url=BASE_URL)
+    @property
+    def params(self) -> Dict:
+        return {"key": self.api_key}
 
-    async def get(self, path: str, params: Optional[Dict] = None) -> Response:
-        """ Make a GET request """
+    def close(self) -> None:
+        return self.client.close()
 
-        if params is None:
-            params = {}
+    def host(self, ip: str) -> HostInfo:
+        """ Get host info """
+        response = self.client.get(f"/host/{ip}", params=self.params)
+        response.raise_for_status()
 
-        params["key"] = self.api_key
+        return HostInfo(**response.json())
 
-        return await self.client.get(path, params=params)
+    def search(
+        self, query: str, page: int = 1, limit: int = 100
+    ) -> Generator[HostInfo, None, None]:
+        params = self.params.copy()
 
-    async def post(
-        self, path: str,
-        data: Optional[Dict] = None,
-        params: Optional[Dict] = None
-    ) -> Response:
-        """ Make a POST request """
+        params["query"] = query
+        params["page"] = page
+        params["limit"] = limit
 
-        if data is None:
-            data = {}
+        response = self.client.get("/shodan/host/search", params=params)
+        response.raise_for_status()
 
-        if params is None:
-            params = {}
+        for host in response.json()["matches"]:
+            yield HostInfo(**host)
 
-        params["key"] = self.api_key
+    def __enter__(self) -> "Client":
+        return self
 
-        return await self.client.post(
-            path,
-            data=data,  # type: ignore
-            params=params
-        )
+    def __exit__(self, *args) -> None:
+        self.close()
+
+
+class AsyncClient(Client):
+    """ ShodanX asynchronous API client """
+
+    def __init__(self, api_key: str) -> None:
+        """ Initialize the client """
+        super().__init__(api_key)
+
+        self.client = httpx.AsyncClient(base_url=BASE_URL)
 
     async def close(self) -> None:
         """ Close the client """
         await self.client.aclose()
 
-    async def __aenter__(self) -> "Client":
-        return self
-
-    async def __aexit__(self, *args) -> None:
-        await self.close()
-
     async def host(self, target: str) -> HostInfo:
         """ Get host info """
-        return HostInfo(**(await self.get(f"/shodan/host/{target}")).json())
+        response = await self.client.get(
+            f"/shodan/host/{target}", params=self.params
+        )
+        response.raise_for_status()
+
+        return HostInfo(**response.json())
 
     async def search(
         self, query: str, page: int = 1, limit: int = 100
     ) -> AsyncGenerator[HostInfo, None]:
         """ Search for hosts """
-        params = {"query": query, "page": page, "limit": limit}
+        params = self.params.copy()
 
-        for host in (
-            await self.get("/shodan/host/search", params=params)
-        ).json()["matches"]:
+        params["query"] = query
+        params["page"] = page
+        params["limit"] = limit
 
+        response = await self.client.get("/shodan/host/search", params=params)
+        response.raise_for_status()
+
+        for host in response.json()["matches"]:
             yield HostInfo(**host)
 
     async def count(self, query: str) -> int:
         """ Count the number of hosts """
-        return (await self.get(
-            "/shodan/host/count", params={"query": query}
-        )).json()["total"]
+        params = self.params.copy()
+        params["query"] = query
+
+        response = await self.client.get("/shodan/host/count", params=params)
+        response.raise_for_status()
+
+        return response.json()["total"]
 
     async def info(self):
         """ Get the account info """
+
+    async def __aenter__(self) -> "AsyncClient":
+        return self
+
+    async def __aexit__(self, *args) -> None:
+        await self.close()
