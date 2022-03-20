@@ -1,110 +1,75 @@
-import httpx
-
-from typing import AsyncGenerator, Dict, Generator
-
-from shodanx.utils import load_api_key
+from typing import Dict
 
 from .models import InternetDB, HostInfo
+from .utils import get, async_get, load_api_key
 
 
-BASE_URL = "https://api.shodan.io"
 IDB_URL = "https://internetdb.shodan.io"
 
 
 class Client:
     """ ShodanX API client """
 
-    def __init__(self, api_key: str = load_api_key()) -> None:
-        self.api_key = api_key
-        self.client = httpx.Client(base_url=BASE_URL, timeout=30)
-
-    @property
-    def params(self) -> Dict:
-        return {"key": self.api_key}
-
-    def close(self) -> None:
-        return self.client.close()
+    def __init__(self, key: str = load_api_key()) -> None:
+        self.key = key
 
     def internetdb(self, ip: str) -> InternetDB:
         """ Get InternetDB info """
-
-        with httpx.Client(base_url=IDB_URL) as client:
-            response = client.get(f"{ip}")
-
-        return InternetDB(**response.json())
+        return InternetDB(**get(f"{ip}", base_url=IDB_URL, key=self.key).json())
 
     def host(self, host: str) -> HostInfo:
         """ Get host info """
-        response = self.client.get(f"/shodan/host/{host}", params=self.params)
-        response.raise_for_status()
-        return HostInfo(**response.json())
+        return HostInfo(**get(f"/shodan/host/{host}", key=self.key).json())
 
-    def search(self, query: str, page: int = 1) -> Generator[HostInfo, None, None]:
-        params = self.params.copy()
-
-        params["query"] = query
-        params["page"] = page
-
-        response = self.client.get("/shodan/host/search", params=params)
-        response.raise_for_status()
-
-        for host in response.json()["matches"]:
-            yield HostInfo(**host)
+    def search(self, query: str, page: int = 1) -> Dict:
+        """ Search for hosts """
+        return get(
+            "/shodan/host/search", params={"query": query, "page": page}, key=self.key
+        ).json()
 
     def __enter__(self) -> "Client":
         return self
 
     def __exit__(self, *args) -> None:
-        self.close()
+        ...
 
 
 class AsyncClient(Client):
     """ ShodanX asynchronous API client """
 
-    def __init__(self, api_key: str = load_api_key()) -> None:
-        """ Initialize the client """
-        super().__init__(api_key)
-
-        self.client = httpx.AsyncClient(base_url=BASE_URL, timeout=30)
-
-    async def close(self) -> None:
-        """ Close the client """
-        await self.client.aclose()
-
     async def internetdb(self, ip: str) -> InternetDB:
         """ Get InternetDB info """
-        async with httpx.AsyncClient(base_url=IDB_URL) as client:
-            response = await client.get(f"{ip}")
-
-        return InternetDB(**response.json())
+        return InternetDB(**(
+            await async_get(
+                f"{ip}",
+                base_url=IDB_URL,
+                key=self.key
+            )
+        ).json())
 
     async def host(self, target: str) -> HostInfo:
         """ Get host info """
-        response = await self.client.get(f"/shodan/host/{target}", params=self.params)
-        response.raise_for_status()
+        return HostInfo(**(
+            await async_get(
+                f"/shodan/host/{target}",
+                key=self.key
+            )
+        ).json())
 
-        return HostInfo(**response.json())
-
-    async def search(self, query: str, page: int = 1) -> AsyncGenerator[HostInfo, None]:
+    async def search(self, query: str, page: int = 1) -> Dict:
         """ Search for hosts """
-        params = self.params.copy()
-        params["query"] = query
-        params["page"] = page
-
-        response = await self.client.get("/shodan/host/search", params=params)
-        response.raise_for_status()
-
-        return (HostInfo(**host) for host in response.json()["matches"])
+        return (await async_get(
+            "/shodan/host/search",
+            params={"query": query, "page": page},
+            key=self.key
+        )).json()
 
     async def count(self, query: str) -> int:
         """ Count the number of hosts """
-        params = self.params.copy()
-        params["query"] = query
-
-        response = await self.client.get("/shodan/host/count", params=params)
-        response.raise_for_status()
-
-        return response.json()["total"]
+        return (await async_get(
+            "/shodan/host/count",
+            params={"query": query}, key=self.key
+        )).json()["total"]
 
     async def info(self):
         """ Get the account info """
@@ -113,4 +78,4 @@ class AsyncClient(Client):
         return self
 
     async def __aexit__(self, *args) -> None:
-        await self.close()
+        ...

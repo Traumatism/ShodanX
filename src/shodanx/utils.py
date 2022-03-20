@@ -1,6 +1,12 @@
 import os
+import httpx
+import asyncer
+
+from typing import Optional, Dict
 
 from shodan.cli.settings import SHODAN_CONFIG_DIR
+
+BASE_URL = "https://api.shodan.io"
 
 
 def load_api_key() -> str:
@@ -19,3 +25,34 @@ def load_api_key() -> str:
 
     with open(keyfile, 'r') as f:
         return f.read().strip()
+
+
+def get(
+    path: str,
+    params: Optional[Dict] = None,
+    key: str = load_api_key(),
+    base_url: str = BASE_URL
+) -> httpx.Response:
+    """ Get a response from the API """
+
+    key = load_api_key()
+
+    if params is None:
+        params = {}
+
+    params["key"] = key
+
+    response = httpx.get(f"{base_url}{path}", params=params)
+    response.raise_for_status()
+
+    return response
+
+
+async def async_get(
+    path: str,
+    params: Optional[Dict] = None,
+    key: str = load_api_key(),
+    base_url: str = BASE_URL
+) -> httpx.Response:
+    """ Get a response from the API """
+    return await asyncer.asyncify(get)(path, params, key)

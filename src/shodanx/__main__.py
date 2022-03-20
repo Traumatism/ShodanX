@@ -14,8 +14,9 @@ console = Console()
 click = rich_click
 click.rich_click.USE_RICH_MARKUP = True
 
-T = TypeVar("T")
 KEY = load_api_key()
+
+T = TypeVar("T")
 
 
 def desync(func: Callable[..., T]) -> Callable[..., T]:
