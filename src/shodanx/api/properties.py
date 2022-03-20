@@ -68,7 +68,6 @@ class ShodanProperty(BaseModel):
     id: str
     module: str
     options: ShodanOptions
-
     ptr: Optional[bool]
 
 

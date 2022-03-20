@@ -7,7 +7,7 @@ from typing import Callable, TypeVar
 
 from rich.console import Console
 
-from .api import Client
+from .api import Client, AsyncClient
 
 console = Console()
 
@@ -48,6 +48,22 @@ def host(target: str) -> None:
     """ Get host info """
     with Client(KEY) as client:
         console.print(client.host(target))
+
+
+@cli.command()
+@click.argument("file", type=click.File("r"))
+@desync
+async def hosts(file: str) -> None:
+    """ Get host info """
+    async with AsyncClient(KEY) as client:
+        lines = [line.strip() for line in file]
+
+        results = asyncio.gather(
+            asyncio.create_task(client.host(line)) for line in lines
+        )
+
+        for result in await results:
+            console.print(result)
 
 
 if __name__ == "__main__":
