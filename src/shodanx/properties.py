@@ -1,8 +1,7 @@
 from .abc import BaseModel
 
-from typing import Any, List, Optional, Union, Literal
-
 from rich.table import Table
+from typing import Any, List, Optional, Union, Literal
 
 
 Tag = Literal[

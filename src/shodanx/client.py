@@ -39,9 +39,7 @@ class Client:
         response.raise_for_status()
         return HostInfo(**response.json())
 
-    def search(
-        self, query: str, page: int = 1
-    ) -> Generator[HostInfo, None, None]:
+    def search(self, query: str, page: int = 1) -> Generator[HostInfo, None, None]:
         params = self.params.copy()
 
         params["query"] = query
@@ -83,30 +81,21 @@ class AsyncClient(Client):
 
     async def host(self, target: str) -> HostInfo:
         """ Get host info """
-        response = await self.client.get(
-            f"/shodan/host/{target}", params=self.params
-        )
-
+        response = await self.client.get(f"/shodan/host/{target}", params=self.params)
         response.raise_for_status()
 
         return HostInfo(**response.json())
 
-    async def search(
-        self, query: str, page: int = 1
-    ) -> AsyncGenerator[HostInfo, None]:
+    async def search(self, query: str, page: int = 1) -> AsyncGenerator[HostInfo, None]:
         """ Search for hosts """
         params = self.params.copy()
-
         params["query"] = query
         params["page"] = page
 
         response = await self.client.get("/shodan/host/search", params=params)
         response.raise_for_status()
 
-        return (
-            HostInfo(**host)
-            for host in response.json()["matches"]
-        )
+        return (HostInfo(**host) for host in response.json()["matches"])
 
     async def count(self, query: str) -> int:
         """ Count the number of hosts """
