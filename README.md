@@ -14,10 +14,13 @@ import shodanx
 import os
 
 
+KEY = os.environ['SHODAN_API_KEY']
+
+
 def synchronous():
     """ ShodanX basic """
 
-    with shodanx.Client() as client:
+    with shodanx.Client(KEY) as client:
         host_info = client.host("1.1.1.1")
         query_results = client.search("apache")
 
@@ -25,7 +28,7 @@ def synchronous():
 async def asynchronous():
     """ ShodanX supports asyncio """
 
-    async with shodanx.AsyncClient() as client:
+    async with shodanx.AsyncClient(KEY) as client:
         host_info = await client.host("1.1.1.1")
         query_results = await client.search("apache")
 

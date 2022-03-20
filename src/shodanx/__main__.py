@@ -7,7 +7,7 @@ from typing import Callable, TypeVar
 
 from rich.console import Console
 
-from .api import Client, AsyncClient
+from .client import Client, AsyncClient
 
 console = Console()
 
