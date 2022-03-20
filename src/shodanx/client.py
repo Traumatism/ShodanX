@@ -30,13 +30,12 @@ class Client:
         return HostInfo(**response.json())
 
     def search(
-        self, query: str, page: int = 1, limit: int = 100
+        self, query: str, page: int = 1
     ) -> Generator[HostInfo, None, None]:
         params = self.params.copy()
 
         params["query"] = query
         params["page"] = page
-        params["limit"] = limit
 
         response = self.client.get("/shodan/host/search", params=params)
         response.raise_for_status()
@@ -74,14 +73,13 @@ class AsyncClient(Client):
         return HostInfo(**response.json())
 
     async def search(
-        self, query: str, page: int = 1, limit: int = 100
+        self, query: str, page: int = 1
     ) -> AsyncGenerator[HostInfo, None]:
         """ Search for hosts """
         params = self.params.copy()
 
         params["query"] = query
         params["page"] = page
-        params["limit"] = limit
 
         response = await self.client.get("/shodan/host/search", params=params)
         response.raise_for_status()
