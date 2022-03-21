@@ -5,8 +5,7 @@ import asyncer
 from typing import Optional, Dict
 
 from shodan.cli.settings import SHODAN_CONFIG_DIR
-
-BASE_URL = "https://api.shodan.io"
+from .consts import SHO_URL
 
 
 def load_api_key() -> str:
@@ -31,7 +30,7 @@ def get(
     path: str,
     params: Optional[Dict] = None,
     key: str = load_api_key(),
-    base_url: str = BASE_URL
+    base_url: str = SHO_URL
 ) -> httpx.Response:
     """ Get a response from the API """
 
@@ -52,7 +51,7 @@ async def async_get(
     path: str,
     params: Optional[Dict] = None,
     key: str = load_api_key(),
-    base_url: str = BASE_URL
+    base_url: str = SHO_URL
 ) -> httpx.Response:
     """ Get a response from the API """
-    return await asyncer.asyncify(get)(path, params, key)
+    return await asyncer.asyncify(get)(path, params, key, base_url)

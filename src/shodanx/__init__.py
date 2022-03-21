@@ -1,3 +1,3 @@
-from .client import Client, AsyncClient
+from .client import ShodanX
 
-__all__ = ["Client", "AsyncClient"]
+__all__ = ["ShodanX"]

@@ -1,80 +1,54 @@
-from typing import Dict
+from typing import Dict, Union
 
-from .models import InternetDB, HostInfo
-from .utils import get, async_get, load_api_key
-
-
-IDB_URL = "https://internetdb.shodan.io"
+from .models import InternetDB, Host
+from .utils import async_get, load_api_key
+from .consts import IDB_URL
 
 
-class Client:
-    """ ShodanX API client """
+class ShodanX:
+    """ ShodanX asynchronous API client """
 
     def __init__(self, key: str = load_api_key()) -> None:
         self.key = key
 
-    def internetdb(self, ip: str) -> InternetDB:
+    async def internetdb(
+        self, host: str, as_json: bool = False
+    ) -> Union[Dict, InternetDB]:
         """ Get InternetDB info """
-        return InternetDB(**get(f"{ip}", base_url=IDB_URL, key=self.key).json())
 
-    def host(self, host: str) -> HostInfo:
+        response = (await async_get(f"/{host}", base_url=IDB_URL, key=self.key)).json()
+
+        if as_json:
+            return response
+
+        return InternetDB(**response)
+
+    async def host(self, host: str, as_json: bool = False) -> Union[Dict, Host]:
         """ Get host info """
-        return HostInfo(**get(f"/shodan/host/{host}", key=self.key).json())
+        response = (await async_get(f"/shodan/host/{host}", key=self.key)).json()
 
-    def search(self, query: str, page: int = 1) -> Dict:
-        """ Search for hosts """
-        return get(
-            "/shodan/host/search", params={"query": query, "page": page}, key=self.key
-        ).json()
+        if as_json:
+            return response
 
-    def __enter__(self) -> "Client":
-        return self
-
-    def __exit__(self, *args) -> None:
-        ...
-
-
-class AsyncClient(Client):
-    """ ShodanX asynchronous API client """
-
-    async def internetdb(self, ip: str) -> InternetDB:
-        """ Get InternetDB info """
-        return InternetDB(**(
-            await async_get(
-                f"{ip}",
-                base_url=IDB_URL,
-                key=self.key
-            )
-        ).json())
-
-    async def host(self, target: str) -> HostInfo:
-        """ Get host info """
-        return HostInfo(**(
-            await async_get(
-                f"/shodan/host/{target}",
-                key=self.key
-            )
-        ).json())
+        return Host(**response)
 
     async def search(self, query: str, page: int = 1) -> Dict:
         """ Search for hosts """
         return (await async_get(
-            "/shodan/host/search",
-            params={"query": query, "page": page},
+            "/shodan/host/search", params={"query": query, "page": page},
             key=self.key
         )).json()
 
     async def count(self, query: str) -> int:
         """ Count the number of hosts """
         return (await async_get(
-            "/shodan/host/count",
-            params={"query": query}, key=self.key
+            "/shodan/host/count", params={"query": query}, key=self.key
         )).json()["total"]
 
     async def info(self):
         """ Get the account info """
 
-    async def __aenter__(self) -> "AsyncClient":
+    async def __aenter__(self) -> "ShodanX":
         return self
 
     async def __aexit__(self, *args) -> None:

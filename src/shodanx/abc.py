@@ -1,12 +1,26 @@
 import pydantic
-import abc
 
 from rich.console import RenderableType
+from rich.table import Table
 
 
 class BaseModel(pydantic.BaseModel):
     """ Base model for all API models """
 
-    @abc.abstractmethod
     def __rich__(self) -> RenderableType:
-        raise NotImplementedError("__rich__() must be implemented")
+        fields = self.__fields__
+        table = Table(show_header=False)
+
+        for _, field in fields.items():
+
+            if field.name == "__raw__":
+                continue
+
+            value = getattr(self, field.name)
+
+            if value is None:
+                continue
+
+            table.add_row(field.name.replace("_", " ").capitalize(), str(value))
+
+        return table
