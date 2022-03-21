@@ -15,7 +15,6 @@ class ShodanX:
         self, host: str, as_json: bool = False
     ) -> Union[Dict, InternetDB]:
         """ Get InternetDB info """
-
         response = (await async_get(f"/{host}", base_url=IDB_URL, key=self.key)).json()
 
         if as_json:

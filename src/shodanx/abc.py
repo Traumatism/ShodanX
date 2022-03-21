@@ -8,10 +8,9 @@ class BaseModel(pydantic.BaseModel):
     """ Base model for all API models """
 
     def __rich__(self) -> RenderableType:
-        fields = self.__fields__
         table = Table(show_header=False)
 
-        for _, field in fields.items():
+        for _, field in self.__fields__.items():
 
             if field.name == "__raw__":
                 continue

@@ -1,10 +1,9 @@
-from typing import Dict, List, Optional, Union
+from typing import List, Optional, Union
 
 from .abc import BaseModel
 
 
 class Location(BaseModel):
-    """ Location property """
     city: Optional[str]
     country_code: Optional[str]
     country_name: Optional[str]
@@ -20,14 +19,11 @@ class Row(BaseModel):
     port: int
     hash: int
     timestamp: str
-
     product: Optional[str]
-
     data: str
     domains: List[str]
     location: Location
     hostnames: List[str]
-
     org: str
     isp: str
     asn: str
@@ -39,11 +35,9 @@ class Host(BaseModel):
     ports: List[int]
     hostnames: List[str]
     domains: List[str]
-
     tags: List[str]
     isp: str
     asn: str
-
     data: List[Row]
 
 
@@ -58,4 +52,4 @@ class InternetDB(BaseModel):
 
 class SearchResults(BaseModel):
     total: int
-    matches: List[Dict]
+    matches: List[Row]
