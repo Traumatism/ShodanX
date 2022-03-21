@@ -1,6 +1,6 @@
 from typing import Dict, Union
 
-from .models import InternetDB, Host
+from .models import InternetDB, Host, SearchResults
 from .utils import async_get, load_api_key
 from .consts import IDB_URL
 
@@ -32,12 +32,19 @@ class ShodanX:
 
         return Host(**response)
 
-    async def search(self, query: str, page: int = 1) -> Dict:
+    async def search(
+        self, query: str, page: int = 1, as_json: bool = False
+    ) -> Union[Dict, SearchResults]:
         """ Search for hosts """
-        return (await async_get(
+        response = (await async_get(
             "/shodan/host/search", params={"query": query, "page": page},
             key=self.key
         )).json()
+
+        if as_json:
+            return response
+
+        return SearchResults(**response)
 
     async def count(self, query: str) -> int:
         """ Count the number of hosts """
