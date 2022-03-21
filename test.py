@@ -9,6 +9,6 @@ client = ShodanX()
 
 
 async def main():
-    console.print(await client.search("product:Minecraft all:'hypixel'"))
+    console.print(await client.host("1.1.1.1"))
 
 asyncio.run(main())

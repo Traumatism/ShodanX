@@ -28,7 +28,7 @@ def load_api_key() -> str:
 def get(
     path: str,
     params: Optional[Dict] = None,
-    key: str = load_api_key(), 
+    key: str = load_api_key(),
     base_url: str = SHODAN_URL
 ) -> httpx.Response:
     """ Get a response from the API """

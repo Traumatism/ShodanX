@@ -47,5 +47,16 @@ async def host(host: str, as_json: bool = False) -> None:
         console.print(await shodan.host(host, as_json=as_json))
 
 
+@cli.command()
+@click.argument("query")
+@click.option("--page", default=1)
+@click.option("--as-json", is_flag=True)
+@asyncf
+async def search(query: str, page: int = 1, as_json: bool = False) -> None:
+    """ Search for hosts """
+    async with shodanx.ShodanX() as shodan:
+        console.print(await shodan.search(query, page, as_json=as_json))
+
+
 if __name__ == "__main__":
     cli()

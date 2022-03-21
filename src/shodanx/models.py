@@ -16,7 +16,6 @@ class Location(BaseModel):
 class Row(BaseModel):
     ip: int
     ip_str: str
-    port: int
     hash: int
     timestamp: str
     product: Optional[str]
@@ -26,6 +25,7 @@ class Row(BaseModel):
     hostnames: List[str]
     org: str
     isp: str
+    port: int
     asn: str
 
 
@@ -37,8 +37,8 @@ class Host(BaseModel):
     domains: List[str]
     tags: List[str]
     isp: str
-    asn: str
     data: List[Row]
+    asn: str
 
 
 class InternetDB(BaseModel):

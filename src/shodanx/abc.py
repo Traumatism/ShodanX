@@ -1,7 +1,10 @@
 import pydantic
 
+
 from rich.console import RenderableType
 from rich.table import Table
+
+__all__ = ["BaseModel"]
 
 
 class BaseModel(pydantic.BaseModel):
